@@ -1,0 +1,25 @@
+From d71c8cf6a311041a0c256d4cf3109fc8ea5280bc Mon Sep 17 00:00:00 2001
+From: Kuan-Jui Chiu <kchiu@axiado.com>
+Date: Tue, 15 Apr 2025 20:15:44 -0700
+Subject: [PATCH] Trigger-ax3000-fw-update-s-for-hard-reset-via-IPMI
+
+---
+ bmc_state_manager.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bmc_state_manager.cpp b/bmc_state_manager.cpp
+index cbf8b36..a32e98a 100644
+--- a/bmc_state_manager.cpp
++++ b/bmc_state_manager.cpp
+@@ -37,7 +37,7 @@ constexpr auto activeState = "active";
+ 
+ /* Map a transition to it's systemd target */
+ const std::map<server::BMC::Transition, const char*> SYSTEMD_TABLE = {
+-    {server::BMC::Transition::Reboot, "reboot.target"}};
++    {server::BMC::Transition::Reboot, "ax3000-reboot.service"}};
+ 
+ constexpr auto SYSTEMD_SERVICE = "org.freedesktop.systemd1";
+ constexpr auto SYSTEMD_OBJ_PATH = "/org/freedesktop/systemd1";
+-- 
+2.25.1
+

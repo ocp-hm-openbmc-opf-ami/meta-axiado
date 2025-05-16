@@ -1,0 +1,38 @@
+# LAYER_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+LCONF_VERSION = "16"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BBMASK = "/meta-common/meta-common/recipes-bsp/u-boot/u-boot-%.bbappend"
+BBMASK += "/meta-ami/meta-common/recipes-bsp/u-boot/u-boot-aspeed-sdk_%.bbappend"
+BBMASK += "/meta-ami/meta-common/recipes-bsp/u-boot/u-boot-fw-utils-aspeed-sdk_%.bbappend"
+
+# meta-intel-openbmc has a config file that needs to be overridden
+BBMASK += "/meta-intel-openbmc/meta-common/recipes-phosphor/ipmi/phosphor-ipmi-ipmb"
+BBMASK += "meta-ami/meta-common/recipes-core/dropbear/dropbear_2024.84.bb"
+BBMASK += "/meta-ami/meta-intel/recipes-intel/emmc-enable/emmc-enable.bbappend"
+BBMASK += "/meta-common/meta-common/recipes-intel/images/intel-platforms.bb"
+BBMASK += "/meta-common/meta-egs/recipes-intel/images/intel-platforms.bbappend"
+BBMASK += "/meta-ami/meta-common/recipes-ami/images/intel-platforms.bbappend"
+BBMASK += "/meta-ami/meta-common/recipes-network/network/static-mac-addr.bbappend"
+BBMASK += "/meta-common/meta-common/recipes-core/os-release/os-release.bbappend"
+
+BBLAYERS ?= " \
+  ##OEROOT##/meta \
+  ##OEROOT##/meta-ami \
+  ##OEROOT##/meta-ami/meta-evb \
+  ##OEROOT##/meta-openembedded/meta-oe \
+  ##OEROOT##/meta-openembedded/meta-networking \
+  ##OEROOT##/meta-openembedded/meta-perl \
+  ##OEROOT##/meta-openembedded/meta-python \
+  ##OEROOT##/meta-phosphor \
+  ##OEROOT##/meta-aspeed \
+  ##OEROOT##/meta-axiado \
+  ##OEROOT##/meta-axiado/meta-evk \
+  ##OEROOT##/meta-common \
+  ##OEROOT##/meta-intel-openbmc \
+  ##OEROOT##/meta-common/meta-common \
+  ##OEROOT##/meta-security \
+  "

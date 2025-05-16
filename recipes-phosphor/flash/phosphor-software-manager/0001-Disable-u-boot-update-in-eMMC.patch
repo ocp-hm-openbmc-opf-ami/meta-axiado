@@ -1,0 +1,39 @@
+From 69b9b3f019f08506b3b2925703a3492f6ee4f47b Mon Sep 17 00:00:00 2001
+From: Kuan-Jui Chiu <kchiu@axiado.com>
+Date: Mon, 12 May 2025 22:53:19 -0700
+Subject: [PATCH] Disable u-boot update in eMMC
+
+---
+ obmc-flash-bmc | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/obmc-flash-bmc b/obmc-flash-bmc
+index 442bb7a0..6a61f6b6 100644
+--- a/obmc-flash-bmc
++++ b/obmc-flash-bmc
+@@ -563,14 +563,14 @@ function mmc_mount() {
+ 
+ function mmc_update() {
+     # Update u-boot if needed
+-    bootPartition="mmcblk0boot0"
+-    devUBoot="/dev/${bootPartition}"
+-    imgUBoot="${imgpath}/${version}/image-u-boot"
+-    if [ "$(cmp_uboot "${devUBoot}" "${imgUBoot}")" != "0" ]; then
+-        echo 0 > "/sys/block/${bootPartition}/force_ro"
+-        dd if="${imgUBoot}" of="${devUBoot}"
+-        echo 1 > "/sys/block/${bootPartition}/force_ro"
+-    fi
++    # bootPartition="mmcblk0boot0"
++    # devUBoot="/dev/${bootPartition}"
++    # imgUBoot="${imgpath}/${version}/image-u-boot"
++    # if [ "$(cmp_uboot "${devUBoot}" "${imgUBoot}")" != "0" ]; then
++    #    echo 0 > "/sys/block/${bootPartition}/force_ro"
++    #    dd if="${imgUBoot}" of="${devUBoot}"
++    #    echo 1 > "/sys/block/${bootPartition}/force_ro"
++    #fi
+ 
+     # Update the secondary (non-running) boot and rofs partitions.
+     label="$(mmc_get_secondary_label)"
+-- 
+2.25.1
+
