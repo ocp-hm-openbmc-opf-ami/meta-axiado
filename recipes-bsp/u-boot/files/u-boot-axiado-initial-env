@@ -1,0 +1,30 @@
+bootcmd=run default_bootcmd
+bootdelay=2
+baudrate=115200
+preboot=
+bootm_size=0x20000000
+fdtaddr=0x3EF00000
+loadaddr=0x3D000000
+scratchpad1=80620804
+ubootsuccess=54d
+ubootstatus=mw.l ${scratchpad1} ${ubootsuccess}
+bootk=run ubootstatus; booti ${loadaddr} - ${fdtaddr}
+newloadaddr=0x4D000000
+bootgz=run ubootstatus; unzip ${loadaddr} ${newloadaddr}; booti ${newloadaddr} - ${fdtaddr}
+bootside=a
+bootcount=0
+bootlimit=3
+bootcmd_a=setenv bootargs ${origbootargs} rootwait root=PARTLABEL=rofs-a; echo "Loading FIT image from slot A..."; ext4load mmc 0:2 ${fit_addr_r} ${image_path}; bootm ${fit_addr_r}#${fdt_conf}
+bootcmd_b=setenv bootargs ${origbootargs} rootwait root=PARTLABEL=rofs-b; echo "Loading FIT image from slot B..."; ext4load mmc 0:3 ${fit_addr_r} ${image_path}; bootm ${fit_addr_r}#${fdt_conf}
+check_boot_count=if test ${bootcount} -ge ${bootlimit}; then run switch_slot; else setexpr bootcount ${bootcount} + 1; saveenv; fi
+switch_slot=if test ${bootside} = a; then setenv bootside b; echo "Switching to slot B"; else setenv bootside a; echo "Switching to slot A"; fi; setenv bootcount 0; saveenv
+show_dtbs=echo "Loading FIT image to check available DTB configurations..."; if ext4load mmc 0:2 ${fit_addr_r} ${image_path}; then echo ""; echo "Available DTB configurations:"; echo "---------------------------"; fdt addr ${fit_addr_r}; fdt list /configurations; echo ""; echo "Current configuration: ${fdt_conf}"; echo ""; echo "To change configuration: setenv fdt_conf <config-name>"; echo "Then save with: saveenv"; else echo "Error: Could not load FIT image from current slot."; echo "Make sure bootable media is inserted."; fi
+set_dtb=if test $# -eq 1; then setenv fdt_conf $1; saveenv; echo "Set DTB configuration to: $1"; echo "This will be used on next boot."; else echo "Usage: run set_dtb <config-name>"; echo "Available configurations can be viewed with: run show_dtbs"; fi
+check_dtb=if test -z "${fdt_conf}"; then echo ""; echo "WARNING: No DTB configuration set!"; echo "Please use 'run show_dtbs' to see available configurations"; echo "Then set one with 'run set_dtb <config-name>'"; echo ""; false; else echo "Using DTB configuration: ${fdt_conf}"; true; fi
+fit_addr_r=0x3C100000
+image_path=/fitImage
+bootcmd=setenv origbootargs ${bootargs}; run ubootstatus; run check_dtb; if test $? -eq 0; then run check_boot_count; if test ${bootside} = a; then run bootcmd_a; else run bootcmd_b; fi; fi
+secure_boot=0
+default_bootcmd=run bootcmd
+
+
